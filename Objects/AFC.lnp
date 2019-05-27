@@ -1,0 +1,6 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\delay.obj",
+".\Objects\timer.obj" 
+TO ".\Objects\AFC" 
+PRINT(".\Listings\AFC.m51")

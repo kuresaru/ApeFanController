@@ -1,0 +1,204 @@
+C51 COMPILER V9.59.0.0   MAIN                                                              05/25/2019 17:22:02 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\DevTools\keil5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listin
+                    -gs\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <STC15F2K60S2.H>
+   2          #include "delay.h"
+   3          #include "timer.h"
+   4          
+   5          sbit KEY1 = P3^1;
+   6          sbit KEY2 = P3^2;
+   7          sbit KEY3 = P3^3;
+   8          sbit FAN = P3^0;
+   9          sbit LEDA = P3^4;
+  10          sbit LEDB = P3^5;
+  11          
+  12          u8 led = 0;
+  13          u8 level = 4;
+  14          u8 time = 5;
+  15          u8 deshake = 0;
+  16          bit waitKeyUp = 0;
+  17          bit levelMode = 1;
+  18          bit start = 0;
+  19          u16 lowProtCount = 0;
+  20          
+  21          void AFC_Init()
+  22          {
+  23   1        P3 = 0xFE;
+  24   1        EA = 1;
+  25   1        Timer0Init();
+  26   1        Timer2Init();
+  27   1      }
+  28          
+  29          void Led_Scan()
+  30          {
+  31   1        P3 &= 0xF1;
+  32   1        P3 |= (led & 0x07) << 1;
+  33   1        LEDA = 0;
+  34   1        Delay100us();
+  35   1        LEDA = 1;
+  36   1        P3 &= 0xF1;
+  37   1        P3 |= (led & 0x38) >> 2;
+  38   1        LEDB = 0;
+  39   1        Delay100us();
+  40   1        LEDB = 1;
+  41   1        P3 |= 0x0E;
+  42   1      }
+  43          
+  44          //0位M 1位- 2位+ 3位等待
+  45          u8 Key_Scan()
+  46          {
+  47   1        u8 tmp = 0;
+  48   1        if (!KEY1)
+  49   1          tmp = 0x1;
+  50   1        else if (!KEY2)
+  51   1          tmp = 0x2;
+  52   1        else if (!KEY3)
+  53   1          tmp = 0x4;
+  54   1        if (tmp)
+C51 COMPILER V9.59.0.0   MAIN                                                              05/25/2019 17:22:02 PAGE 2   
+
+  55   1        {//如果有按键按下
+  56   2          if (waitKeyUp)//如果正在等待抬起
+  57   2            tmp |= 0x8;//返回结果标记等待
+  58   2          waitKeyUp = 1;//标记等待抬起状态
+  59   2        } 
+  60   1        else 
+  61   1        {//没有按键按下
+  62   2          if (waitKeyUp)//正在等待抬起
+  63   2          {
+  64   3            waitKeyUp = 0;//标记按键抬起
+  65   3            deshake = 1;//开始去抖
+  66   3          }
+  67   2        }
+  68   1        if (deshake)
+  69   1        {
+  70   2          deshake++;
+  71   2          if (deshake > 70)
+  72   2            deshake = 0;
+  73   2        }
+  74   1        Delay100us();
+  75   1        return deshake ? 0 : tmp;
+  76   1      }
+  77          
+  78          void setFan(u8 level) //0-4
+  79          {
+  80   1        if (level == 0)
+  81   1        {
+  82   2          TR0 = 0;
+  83   2          FAN = 0;
+  84   2        }
+  85   1        else if (level == 4)
+  86   1        {
+  87   2          TR0 = 0;
+  88   2          FAN = 1;
+  89   2        }
+  90   1        else
+  91   1        {
+  92   2          pwmMode = level - 1;
+  93   2          TR0 = 1;
+  94   2        }
+  95   1      }
+  96          
+  97          void main()
+  98          {
+  99   1        u8 tmp;
+ 100   1        u16 mkTime = 0;
+ 101   1        AFC_Init();
+ 102   1        led = 0x3F;
+ 103   1        while (1)
+ 104   1        {
+ 105   2          Led_Scan();
+ 106   2          tmp = Key_Scan();
+ 107   2          if (tmp)
+ 108   2          {//有按键被按下
+ 109   3            if ((tmp & 0xC) == 0x4)
+ 110   3            {//+键
+ 111   4              if (levelMode && level < 4)
+ 112   4              {
+ 113   5                level++;
+ 114   5                if (start)
+ 115   5                  setFan(level);
+ 116   5              }
+C51 COMPILER V9.59.0.0   MAIN                                                              05/25/2019 17:22:02 PAGE 3   
+
+ 117   4              else if (!levelMode && time < 63)
+ 118   4                time++;
+ 119   4            } 
+ 120   3            else if ((tmp & 0xA) == 0x2)
+ 121   3            {//-键
+ 122   4              if (levelMode && level > 1)
+ 123   4              {
+ 124   5                level--;
+ 125   5                if (start)
+ 126   5                  setFan(level);
+ 127   5              }
+ 128   4              else if (!levelMode && time > 1)
+ 129   4                time--;
+ 130   4            }
+ 131   3            else if (tmp & 0x1)
+ 132   3            {//M键被按下
+ 133   4              if (mkTime < 1600)
+ 134   4              {
+ 135   5                mkTime++;
+ 136   5              }
+ 137   4              else if (mkTime != 0xFFFF)
+ 138   4              {//M键按了500ms以上
+ 139   5                mkTime = 0xFFFF;
+ 140   5                start = !start;
+ 141   5                setFan(start ? level : 0);
+ 142   5              }
+ 143   4            }
+ 144   3            led = 0;//按下时不显示
+ 145   3          }
+ 146   2          else
+ 147   2          {//没有按键被按下
+ 148   3            if (mkTime > 0)
+ 149   3            {//没有键按下 但是M键曾经被按过
+ 150   4              if (mkTime != 0xFFFF)
+ 151   4              {
+ 152   5                mkTime = 0;
+ 153   5                levelMode = !levelMode;
+ 154   5              }
+ 155   4              mkTime = 0;
+ 156   4            }
+ 157   3            if (levelMode)
+ 158   3            {//显示强度
+ 159   4              led = 1 << (level - 1);
+ 160   4            }
+ 161   3            else
+ 162   3            {//显示时间
+ 163   4              led = flip200ms ? time : 0;
+ 164   4            }
+ 165   3          }
+ 166   2          if (!LEDB && (++lowProtCount > 10000))
+ 167   2          {//低电保护
+ 168   3            start = 0;
+ 169   3            setFan(0);
+ 170   3            P3 &= 0xF1;
+ 171   3            PCON |= 0x02;
+ 172   3          }
+ 173   2        }
+ 174   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    447    ----
+C51 COMPILER V9.59.0.0   MAIN                                                              05/25/2019 17:22:02 PAGE 4   
+
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      6       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      3    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

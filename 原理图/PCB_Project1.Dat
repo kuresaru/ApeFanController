@@ -1,0 +1,22 @@
+﻿Field=#~Integer~#~50|Field=Description~String~Description~100|Field=Designator~String~Designator~100|Field=Comment~String~Comment~100|ReportField=Currency~<none>|ReportField=ProductionQuantity~1|ReportField=ProjectFileName~PCB_Project1.PrjPCB|ReportField=ProjectFullPath~D:\Things\单片机\Projects\ApeFanController_STC15F104W\原理图\PCB_Project1.PrjPCB|ReportField=Title~Bill of Materials For Project [PCB_Project1.PrjPCB] (No PCB Document Selected)|ReportField=ReportTime~16:25:54|ReportField=ReportDate~2019-5-23|ReportField=ReportDateTime~2019-5-23 16:25:54|ReportField=OutputName~Bill of Materials|ReportField=OutputType~BOM_PartType|ReportField=GeneratorName~BOM|ReportField=GeneratorDescription~Bill of Materials|ReportField=VariantName~None|ReportField=TotalQuantity~31|ReportField=TotalActualPrice~0|ReportField=TotalTargetPrice~0|ReportField=VersionControl_RevNumber~|ReportField=VersionControl_ProjFolderRevNumber~|ReportField=Address1~|ReportField=Address2~|ReportField=Address3~|ReportField=Address4~|ReportField=Application_BuildNumber~|ReportField=ApprovedBy~|ReportField=Author~|ReportField=CheckedBy~|ReportField=CompanyName~|ReportField=CurrentDate~2019-5-23|ReportField=CurrentTime~16:20:18|ReportField=Date~|ReportField=DocumentFullPathAndName~D:\Things\单片机\Projects\ApeFanController_STC15F104W\原理图\Sheet1.SchDoc|ReportField=DocumentName~Sheet1.SchDoc|ReportField=DocumentNumber~|ReportField=DrawnBy~|ReportField=Engineer~|ReportField=ImagePath~|ReportField=ModifiedDate~2019-5-23|ReportField=Organization~|ReportField=ProjectName~PCB_Project1.PrjPCB|ReportField=Revision~|ReportField=Rule~|ReportField=SheetNumber~|ReportField=SheetTotal~|ReportField=Time~|ReportField=Title~|ReportField=DataSourceFileName~PCB_Project1.PrjPCB|ReportField=DataSourceFullPath~D:\Things\单片机\Projects\ApeFanController_STC15F104W\原理图\PCB_Project1.PrjPCB|ReportField=PCBConfigurationName~Sources|ReportField=Item~|ReportField=ItemRevision~|ReportField=ItemAndRevision~|ReportField=ItemRevisionBase~|ReportField=ItemRevisionLevel1~|ReportField=ItemRevisionLevel2~|ReportField=ItemRevisionLevel1AndBase~|ReportField=ItemRevisionLevel2AndLevel1~
+1|High Conductance Fast Diode|D1|Diode 1N4148
+2|Typical INFRARED GaAs LED|D2|PWR
+3|Typical INFRARED GaAs LED|D3|LED1
+4|Typical INFRARED GaAs LED|D4|LED2
+5|Typical INFRARED GaAs LED|D5|LED3
+6|Typical INFRARED GaAs LED|D6|LED4
+7|Typical INFRARED GaAs LED|D7|LED5
+8|Typical INFRARED GaAs LED|D8|LED6
+9|Header, 4-Pin|J1|Connector
+10|N-Channel MOSFET|Q1|IRF3205
+11|Resistor|R1, R3, R4, R5, R6|6.2k
+12|Resistor|R7, R8, R9, R11, R12, R13|1k
+13|Varistor (Voltage-Sensitive Resistor)|R10, R14|10k
+14|Resistor|R15|10k
+15|Switch|S1|M
+16|Switch|S2|-
+17|Switch|S3|+
+18||U1|7805
+19||U2|STC15F104W
+20||U3|TL431
+21|Dual Operational Amplifier|U4|LM358D
