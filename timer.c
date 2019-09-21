@@ -5,7 +5,6 @@ sbit FAN = P3^0;
 
 extern bit start;
 extern u8 time;
-void setFan(u8 level);
 
 u8 data pwmTable[] = {
 	// 关           开
@@ -44,6 +43,7 @@ void Timer2Init(void)		//5毫秒@6.000MHz
 	AUXR |= 0x10;		//定时器2开始计时
 }
 
+//用于发生PWM
 void Timer0_IRQHandler() interrupt 1
 {
 	if (pwmSta)
@@ -62,6 +62,7 @@ void Timer0_IRQHandler() interrupt 1
 	}
 }
 
+//有200ms的Tick 所以不能停 只是在没有启动的时候不会加计时Tick
 void Timer2_IRQHandler() interrupt 12
 {
 	tick5ms++;
@@ -83,9 +84,11 @@ void Timer2_IRQHandler() interrupt 12
 					tick30m++;
 					if (tick30m >= time)
 					{
+						TR0 = 0;
 						tick30m = 0;
 						start = 0;
-						setFan(0);
+						//setFan(0);
+						FAN = 0;
 					}
 				}
 			}
